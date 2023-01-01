@@ -18,10 +18,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         const aboutCollection = client.db('SocailProjects').collection('aboutOption');
+        const postCollection = client.db('SocailProjects').collection('PostOption');
 
         app.get('/about/:email', async (req, res) => {
             const email = req.params.email;
-            const query = {email:email}
+            const query = { email: email }
             const user = await aboutCollection.findOne(query);
             res.send(user)
         });
@@ -30,7 +31,7 @@ async function run() {
             const query = req.body
             const result = await aboutCollection.insertOne(query)
             res.send(result)
-        })
+        });
 
         app.put('/about/:id', async (req, res) => {
             const id = req.params.id;
@@ -47,7 +48,22 @@ async function run() {
             }
             const result = await aboutCollection.updateOne(filter, updatedUser, option);
             res.send(result)
+        });
+
+
+        //post api control here
+        app.get('/posts', async(req,res)=>{
+            const query = {};
+            const result = await postCollection.find().toArray();
+            res.send(result);
         })
+        app.post('/posts', async (req, res) => {
+            const query = req.body;
+            const result = await postCollection.insertOne(query);
+            res.send(result);
+        });
+
+
     }
     finally {
 
